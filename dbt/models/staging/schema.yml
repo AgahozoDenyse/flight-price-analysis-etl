@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: stg_flight_prices
+    description: Cleaned and validated flight price records ready for analysis
+    columns:
+      - name: airline
+        description: Airline name
+        tests:
+          - not_null
+      - name: source
+        description: Departure city
+        tests:
+          - not_null
+      - name: destination
+        description: Arrival city
+        tests:
+          - not_null
+      - name: base_fare
+        description: Base ticket price (numeric)
+        tests:
+          - not_null
+      - name: tax_and_surcharge
+        description: Taxes and fees (numeric)
+        tests:
+          - not_null
+      - name: total_fare
+        description: base_fare + tax_and_surcharge
+        tests:
+          - not_null

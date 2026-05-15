@@ -1,0 +1,20 @@
+select
+    airline,
+    source,
+    source_name,
+    destination,
+    destination_name,
+    departure_date_and_time,
+    arrival_date_and_time,
+    duration_hrs,
+    stopovers,
+    aircraft_type,
+    booking_class,
+    booking_source,
+    seasonality,
+    days_before_departure,
+    base_fare,
+    tax_and_surcharge,
+    total_fare,
+    now() as run_id
+from {{ ref('stg_flight_prices') }}

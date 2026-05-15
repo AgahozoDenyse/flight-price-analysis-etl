@@ -1,0 +1,14 @@
+name: flight_price_dbt
+version: "1.0.0"
+profile: flight_price_dbt
+
+model-paths: ["models"]
+test-paths: ["tests"]
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  flight_price_dbt:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

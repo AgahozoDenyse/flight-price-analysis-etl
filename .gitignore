@@ -13,3 +13,10 @@ config/
 .DS_Store
 Thumbs.db
 
+./.claude
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/profiles.yml

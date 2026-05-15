@@ -8,5 +8,6 @@ RUN pip install --no-cache-dir \
     apache-airflow-providers-mysql \
     apache-airflow-providers-postgres \
     pandas \
-    pymysql
+    pymysql \
+    dbt-postgres
 
