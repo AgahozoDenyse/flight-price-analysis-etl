@@ -4,7 +4,7 @@
 
 This guide provides step-by-step instructions for setting up, running, and monitoring the Flight Price Analysis ETL pipeline.
 
-The pipeline uses **Apache Airflow**, **MySQL**, and **PostgreSQL**, all running in a **Docker environment**.
+The pipeline uses **Apache Airflow**, **MySQL**, **PostgreSQL**, and **dbt**, all running in a **Docker environment**.
 
 ---
 
@@ -34,7 +34,7 @@ cd flight_price_analysis_project
 Run the following command:
 
 ```bash
-docker compose up -d
+docker compose up -d --build
 ```
 
 This will start:
@@ -157,7 +157,7 @@ Graph View
 Expected:
 
 ```text
-load_csv_to_mysql → validate_data_mysql → transform_and_compute_kpis
+load_csv_to_mysql → validate_data_mysql → transfer_to_postgres → dbt_run → dbt_test → transform_and_compute_kpis
 ```
 
 All tasks should turn:
@@ -174,6 +174,7 @@ green (SUCCESS)
 
 ```sql
 SELECT COUNT(*) FROM flight_price_staging;
+
 ```
 
 ---
@@ -182,6 +183,11 @@ SELECT COUNT(*) FROM flight_price_staging;
 
 ```sql
 SELECT * FROM transformed_flight_prices LIMIT 10;
+SELECT * FROM avg_fare_by_airline;
+SELECT * FROM booking_count_by_airline;
+SELECT * FROM popular_routes;
+SELECT * FROM seasonal_fare_variation;
+
 ```
 
 ---
@@ -233,6 +239,8 @@ dags/        → Airflow DAG definition
 src/         → ETL logic  
 data/        → Input dataset  
 reports/     → Documentation  
+dbt/         → dbt transformation models
+
 ```
 
 ---
