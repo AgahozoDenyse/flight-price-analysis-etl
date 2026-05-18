@@ -1,6 +1,8 @@
 from airflow.sdk import dag, task, Variable
-from airflow.operators.bash import BashOperator
+#from airflow.operators.bash import BashOperator
+from airflow.providers.standard.operators.bash import BashOperator
 from datetime import datetime, timedelta
+from src.transform import transform_and_compute_kpis_func
 
 from src.extract_load import load_csv_to_mysql_func
 from src.validate import validate_data_mysql_func
@@ -55,6 +57,13 @@ def flight_price_analysis_dag():
             postgres_conn_id=POSTGRES_CONN_ID,
             expected_count=expected_count,
         )
+    
+    @task
+    def transform_and_compute_kpis(expected_count: int):
+        return transform_and_compute_kpis_func(
+            postgres_conn_id=POSTGRES_CONN_ID,
+            expected_count=expected_count,
+    )
 
     dbt_run = BashOperator(
         task_id="dbt_run",
@@ -66,9 +75,14 @@ def flight_price_analysis_dag():
         bash_command=f"cd {DBT_DIR} && ~/.local/bin/dbt test --profiles-dir .",
     )
 
+
+
     loaded_count = load_csv_to_mysql()
     validated_count = validate_data_mysql(loaded_count)
-    transfer_to_postgres(validated_count) >> dbt_run >> dbt_test
+    transferred_count = transfer_to_postgres(validated_count)
+    transferred_count >> dbt_run >> dbt_test
+    kpi_count = transform_and_compute_kpis(transferred_count)
+    dbt_test >> kpi_count
 
 
 dag_instance = flight_price_analysis_dag()
